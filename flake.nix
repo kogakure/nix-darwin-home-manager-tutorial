@@ -20,8 +20,11 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, pwnvim }:
     let
-      configuration = { pkgs, ... }: {
-        imports = [ ./modules/darwin ];
+      configuration = { config, pkgs, ... }: {
+        imports = [
+          ./modules/darwin
+          ./modules/home-manager
+        ];
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -32,50 +35,8 @@
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          users.kogakure = {
-            home.stateVersion = "22.11";
-            home.packages = with pkgs; [
-              ripgrep
-              fd
-              curl
-              less
-              pwnvim.packages."aarch64-darwin".default
-            ];
-            home.sessionVariables = {
-              PAGER = "less";
-              CLICLOLOR = 1;
-              EDITOR = "nvim";
-            };
-            programs.bat.enable = true;
-            programs.bat.config.theme = "TwoDark";
-            programs.fzf.enable = true;
-            programs.fzf.enableZshIntegration = true;
-            programs.eza.enable = true;
-            programs.git.enable = true;
-            programs.zsh.enable = true;
-            programs.zsh.enableCompletion = true;
-            programs.zsh.autosuggestion.enable = true;
-            programs.zsh.syntaxHighlighting.enable = true;
-            programs.zsh.shellAliases = { ls = "ls --color=auto -F"; };
-            programs.starship.enable = true;
-            programs.starship.enableZshIntegration = true;
-            programs.alacritty = {
-              enable = true;
-              settings.font.normal.family = "MesloLGS Nerd Font Mono";
-              settings.font.size = 16;
-            };
-
-            home.file.".inputrc".text = ''
-              set show-all-if-ambiguos on
-              set completion-ignore-case on
-              set mark-directories on
-              set mark-symlinked-directories on
-              set match-hidden-files off
-              set visible-stats on
-              set keymap vi
-              set editing-mode vi-insert
-            '';
-          };
+          users.kogakure = { };
+          extraSpecialArgs = { inherit pwnvim; };
         };
       };
     in
@@ -87,6 +48,7 @@
           configuration
           home-manager.darwinModules.home-manager
         ];
+        specialArgs = { inherit pwnvim; };
       };
 
       # Expose the package set, including overlays, for convenience.
