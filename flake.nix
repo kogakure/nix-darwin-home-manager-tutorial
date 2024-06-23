@@ -21,48 +21,10 @@
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, pwnvim }:
     let
       configuration = { pkgs, ... }: {
-        nix.settings.experimental-features = "nix-command flakes";
-
-        environment.shells = [ pkgs.bash pkgs.zsh ];
-        environment.loginShell = pkgs.zsh;
-        environment.systemPackages = [ pkgs.coreutils ];
-        environment.systemPath = [ "/opt/homebrew/bin" ];
-        environment.pathsToLink = [ "/Applications" ];
+        imports = [ ./modules/darwin ];
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
-        system.keyboard.enableKeyMapping = true;
-        system.keyboard.remapCapsLockToEscape = true;
-
-        fonts.packages = [ (pkgs.nerdfonts.override { fonts = [ "Meslo" ]; }) ];
-
-        services.nix-daemon.enable = true;
-
-        programs.zsh.enable = true;
-
-        system.defaults.finder.AppleShowAllExtensions = true;
-        system.defaults.finder._FXShowPosixPathInTitle = true;
-        system.defaults.dock.autohide = true;
-        system.defaults.NSGlobalDomain.AppleShowAllExtensions = true;
-        system.defaults.NSGlobalDomain.InitialKeyRepeat = 14;
-        system.defaults.NSGlobalDomain.KeyRepeat = 1;
-
-        # Used for backwards compatibility, please read the changelog before changing.
-        # $ darwin-rebuild changelog
-        system.stateVersion = 4;
-
-        # Homebrew for MacOS packages not in nixpkgs
-        homebrew = {
-          enable = true;
-          caskArgs.no_quarantine = true;
-          global.brewfile = true;
-          taps = [ "fujiapples852/trippy" ];
-          # Mac App Store apps
-          masApps = { };
-          # Homebrew casks
-          casks = [ "raycast" "amethyst" ];
-          brews = [ "trippy" ];
-        };
 
         # The platform the configuration will be used on.
         nixpkgs.hostPlatform = "aarch64-darwin";
