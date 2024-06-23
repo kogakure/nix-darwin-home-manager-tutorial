@@ -26,6 +26,8 @@
         environment.shells = [ pkgs.bash pkgs.zsh ];
         environment.loginShell = pkgs.zsh;
         environment.systemPackages = [ pkgs.coreutils ];
+        environment.systemPath = [ "/opt/homebrew/bin" ];
+        environment.pathsToLink = [ "/Applications" ];
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -48,6 +50,19 @@
         # Used for backwards compatibility, please read the changelog before changing.
         # $ darwin-rebuild changelog
         system.stateVersion = 4;
+
+        # Homebrew for MacOS packages not in nixpkgs
+        homebrew = {
+          enable = true;
+          caskArgs.no_quarantine = true;
+          global.brewfile = true;
+          taps = [ "fujiapples852/trippy" ];
+          # Mac App Store apps
+          masApps = { };
+          # Homebrew casks
+          casks = [ "raycast" "amethyst" ];
+          brews = [ "trippy" ];
+        };
 
         # The platform the configuration will be used on.
         nixpkgs.hostPlatform = "aarch64-darwin";
@@ -87,6 +102,17 @@
               settings.font.normal.family = "MesloLGS Nerd Font Mono";
               settings.font.size = 16;
             };
+
+            home.file.".inputrc".text = ''
+              set show-all-if-ambiguos on
+              set completion-ignore-case on
+              set mark-directories on
+              set mark-symlinked-directories on
+              set match-hidden-files off
+              set visible-stats on
+              set keymap vi
+              set editing-mode vi-insert
+            '';
           };
         };
       };
