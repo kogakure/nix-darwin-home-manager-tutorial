@@ -13,9 +13,12 @@
     # Manages configs links things into your home directory
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Tricked out nvim
+    pwnvim.url = "github:zmre/pwnvim";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager, pwnvim }:
     let
       configuration = { pkgs, ... }: {
         nix.settings.experimental-features = "nix-command flakes";
@@ -54,7 +57,13 @@
           useUserPackages = true;
           users.kogakure = {
             home.stateVersion = "22.11";
-            home.packages = with pkgs; [ ripgrep fd curl less ];
+            home.packages = with pkgs; [
+              ripgrep
+              fd
+              curl
+              less
+              pwnvim.packages."aarch64-darwin".default
+            ];
             home.sessionVariables = {
               PAGER = "less";
               CLICLOLOR = 1;
