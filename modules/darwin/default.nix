@@ -2,15 +2,18 @@
 
 {
   nix.settings.experimental-features = "nix-command flakes";
+  environment = {
+    shells = with pkgs; [ bash zsh ];
+    loginShell = pkgs.zsh;
+    systemPackages = [ pkgs.coreutils ];
+    systemPath = [ "/opt/homebrew/bin" ];
+    pathsToLink = [ "/Applications" ];
+  };
 
-  environment.shells = [ pkgs.bash pkgs.zsh ];
-  environment.loginShell = pkgs.zsh;
-  environment.systemPackages = [ pkgs.coreutils ];
-  environment.systemPath = [ "/opt/homebrew/bin" ];
-  environment.pathsToLink = [ "/Applications" ];
-
-  system.keyboard.enableKeyMapping = true;
-  system.keyboard.remapCapsLockToEscape = true;
+  system.keyboard = {
+    enableKeyMapping = true;
+    remapCapsLockToEscape = true;
+  };
 
   fonts.packages = [ (pkgs.nerdfonts.override { fonts = [ "Meslo" ]; }) ];
 
@@ -18,12 +21,14 @@
 
   programs.zsh.enable = true;
 
-  system.defaults.finder.AppleShowAllExtensions = true;
-  system.defaults.finder._FXShowPosixPathInTitle = true;
-  system.defaults.dock.autohide = true;
-  system.defaults.NSGlobalDomain.AppleShowAllExtensions = true;
-  system.defaults.NSGlobalDomain.InitialKeyRepeat = 14;
-  system.defaults.NSGlobalDomain.KeyRepeat = 1;
+  system.defaults = {
+    finder.AppleShowAllExtensions = true;
+    finder._FXShowPosixPathInTitle = true;
+    dock.autohide = true;
+    NSGlobalDomain.AppleShowAllExtensions = true;
+    NSGlobalDomain.InitialKeyRepeat = 14;
+    NSGlobalDomain.KeyRepeat = 1;
+  };
 
   system.stateVersion = 4;
 

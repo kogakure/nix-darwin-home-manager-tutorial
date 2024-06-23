@@ -18,16 +18,7 @@
           EDITOR = "nvim";
         };
 
-        file.".inputrc".text = ''
-          set show-all-if-ambiguous on
-          set completion-ignore-case on
-          set mark-directories on
-          set mark-symlinked-directories on
-          set match-hidden-files off
-          set visible-stats on
-          set keymap vi
-          set editing-mode vi-insert
-        '';
+        file.".inputrc".source = ./dotfiles/inputrc;
       };
 
       programs = {
@@ -46,7 +37,11 @@
           enableCompletion = true;
           autosuggestion.enable = true;
           syntaxHighlighting.enable = true;
-          shellAliases = { ls = "ls --color=auto -F"; };
+          shellAliases = {
+            ls = "ls --color=auto -F";
+            nixswitch = "darwin-rbuild switch --flake ~/.dotfiles/.#";
+            nixup = "pushd ~/.dotfiles; nix flake update; nixswitch; popd";
+          };
         };
         starship = {
           enable = true;
